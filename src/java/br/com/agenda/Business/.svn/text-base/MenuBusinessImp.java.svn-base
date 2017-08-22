@@ -1,0 +1,275 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package br.com.agenda.Business;
+
+import br.com.agenda.Crud.CrudBusinessImp;
+import br.com.agenda.Crud.CrudDao;
+import br.com.agenda.Dao.AcessoDao;
+import br.com.agenda.Dao.MenuDao;
+import br.com.agenda.Exceptions.AgendaException;
+import br.com.agenda.Model.Acesso;
+import br.com.agenda.Model.Menu;
+import br.com.agenda.Model.Usuario;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import javax.faces.model.DataModel;
+import org.primefaces.component.menuitem.MenuItem;
+import org.primefaces.component.submenu.Submenu;
+import org.primefaces.model.DefaultMenuModel;
+import org.primefaces.model.MenuModel;
+
+/**
+ *
+ * @author Destroyer
+ */
+public class MenuBusinessImp extends CrudBusinessImp<Menu> implements MenuBusiness, Serializable {
+
+    private Menu model = new Menu();
+    private Usuario usr;
+    private DataModel tabModel;
+    private MenuModel modelo;
+
+    @Override
+    public CrudDao<Menu> getDao() throws Exception {
+        return new MenuDao();
+    }
+
+    @Override
+    public MenuModel menusSistema() throws Exception {
+        try {
+            Submenu submenu;
+            Menu aux = new Menu();
+            getDao().setUsuario(this.getUsr());
+            this.modelo = new DefaultMenuModel();
+            if (!getDao().select().isEmpty()) {
+                for (Menu obj : ((MenuDao) getDao()).retornaMenus(aux, 0)) {
+                    submenu = new Submenu();
+                    submenu.setLabel(obj.getMenuNome());
+                    submenu.setId(obj.getMenuNome());
+                    for (Menu o : ((MenuDao) getDao()).retornaMenus(obj, 1)) {
+                        MenuItem item = new MenuItem();
+                        item.setValue(o.getMenuNome());
+                        item.setUrl(o.getMenuLink());
+                        submenu.getChildren().add(item);
+                    }
+                    this.modelo.addSubmenu(submenu);
+                }
+                return this.modelo;
+            } else {
+                addMenusSistema();
+                for (Menu obj : ((MenuDao) getDao()).retornaMenus(aux, 0)) {
+                    submenu = new Submenu();
+                    submenu.setLabel(obj.getMenuDescr());
+                    for (Menu o : ((MenuDao) getDao()).retornaMenus(obj, 1)) {
+                        MenuItem item = new MenuItem();
+                        item.setValue(o.getMenuDescr());
+                        item.setUrl(o.getMenuLink());
+                        submenu.getChildren().add(item);
+                    }
+                    this.modelo.addSubmenu(submenu);
+                }
+                return this.modelo;
+            }
+        } catch (Exception e) {
+            throw new AgendaException(e, this.usr);
+        }
+    }
+
+    private void addMenusSistema() throws Exception {
+        try {
+            Acesso modelAcesso = new Acesso();
+            AcessoDao daoAcesso = new AcessoDao();
+            daoAcesso.setUsuario(this.usr);
+            Collection<Menu> pai = menusPai();
+            String[] nomePai = new String[6];
+            Integer[] idPai = new Integer[6];
+            int i = 0;
+            for (Menu model : pai) {
+                Menu beanRetorno = getDao().save(model);
+                nomePai[i] = beanRetorno.getMenuNome();
+                idPai[i] = beanRetorno.getMenuId();
+                i++;
+            }
+            Map<String, Collection<Menu>> filho = menusFilho(nomePai, idPai);
+            if (!filho.isEmpty()) {
+                Collection<Collection<Menu>> dadosFilhog = filho.values();
+                for (Collection<Menu> model : dadosFilhog) {
+                    for (Menu model2 : model) {
+                        getDao().save(model2);
+                        modelAcesso.setAcessMenuId(model2);
+                        modelAcesso.setAcessUsrId(this.usr);
+                        modelAcesso.setAcessAlt(true);
+                        modelAcesso.setAcessExcl(true);
+                        modelAcesso.setAcessIncl(true);
+                        modelAcesso.setAcessPesq(true);
+                        modelAcesso.setAcessSts(true);
+                        daoAcesso.save(modelAcesso);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new AgendaException(e, this.usr);
+        }
+    }
+
+    private Collection<Menu> menusPai() throws Exception {
+        try {
+            String[] nome = {"Cadastros", "x", "xx", "xxx", "xxxx", "xxxxx"};
+            Collection<Menu> dados = new ArrayList<Menu>();
+            for (int i = 0; i < nome.length; i++) {
+                this.model = new Menu();
+                this.model.setMenuNome(nome[i]);
+                this.model.setMenuOrdem(i);
+                this.model.setMenuSts(true);
+                this.model.setMenuTipo("G");
+                this.model.setMenuLink("#");
+                this.model.setMenuMenuId(0);
+                dados.add(this.model);
+            }
+            return dados;
+        } catch (Exception e) {
+            throw new AgendaException(e, this.usr);
+        }
+    }
+
+    private Map<String, Collection<Menu>> menusFilho(String[] pai, Integer[] idPai) throws Exception {
+        Map<String, Collection<Menu>> dados = new HashMap<String, Collection<Menu>>();
+        try {
+            for (int i = 0; i < pai.length; i++) {
+                if ("Cadastros".equalsIgnoreCase(pai[i])) {
+                    String[] cadastrosNome = {"Empresa", "Cliente", "Filial", "Departamento", "Funcionário", "Usuário", "Acessos"};
+                    String[] cadastrosDesc = {"Cadastro/alteração da empresa", "Cadastro/alteração de cliente", "Cadastro/alteração das filiais", "Cadastro/alteração dos departamentos", "Cadastro/alteração dos funcionários", "Cadastro/alteração dos usuários do sistema", "Cadastro/alteração do acesso dos usuários ao sistema"};
+                    String[] cadastrosLink = {"/pages/empresa/empresa.faces", "/pages/cliente/cliente.faces", "/pages/filial/filial.faces", "/pages/departamento/departamento.faces", "/pages/funcionario/funcionario.faces", "/pages/usuario/usuario.faces", "/pages/acesso/acesso.faces"};
+                    //G de gerente e F de funcionario e A de administrador
+                    String[] cadastrosTipo = {"G", "G", "F", "F", "G", "G", "G"};
+                    Collection<Menu> dadosCadastros = new ArrayList<Menu>();
+                    for (int j = 0; j < cadastrosNome.length; j++) {
+                        this.model = new Menu();
+                        this.model.setMenuNome(cadastrosNome[j]);
+                        this.model.setMenuOrdem(j);
+                        this.model.setMenuSts(true);
+                        this.model.setMenuTipo(cadastrosTipo[j]);
+                        this.model.setMenuDescr(cadastrosDesc[j]);
+                        this.model.setMenuLink(cadastrosLink[j]);
+                        this.model.setMenuMenuId(idPai[i]);
+                        dadosCadastros.add(this.model);
+                    }
+                    dados.put("Cadastro", dadosCadastros);
+                } else if ("Armazem".equalsIgnoreCase(pai[i])) {
+                    String[] armazemNome = {"Tipos de armazenagem", "Andar", "Rua", "Prateleira", "Configuração do armazem", "Tipos de movimento", "Tipo de conteúdo", "Conteúdo"};
+                    String[] armazemDesc = {"Cadastro/alteração de tipos de armazenagem", "Cadastro/alteração de andares do armazem", "Cadastro/alteração de ruas do armazem",
+                        "Cadastro/alteração de prateleiras do armazem", "Cadastro/alteração da configuração do armazem", "Cadastro/alteração do tipo de movimento",
+                        "Cadastro/alteração do tipo de conteúdo", "Cadastro/alteração de conteúdo"};
+                    String[] armazemLink = {"/pages/tipoarmazenagem/tipoarmazenagem.faces", "/pages/andar/andar.faces", "/pages/rua/rua.faces", "/pages/prateleira/prateleira.faces", "/pages/armazenagem/armazenagem.faces", "/pages/tipomovimento/tipomovimento.faces", "/pages/tipoconteudo/tipoconteudo.faces", "/pages/conteudo/conteudo.faces"};
+                    //G de gerente e F de funcionario e A de administrador
+                    String[] armazemTipo = {"G", "G", "G", "G", "G", "G", "F", "F"};
+                    Collection<Menu> dadosArmazem = new ArrayList<Menu>();
+                    for (int j = 0; j < armazemNome.length; j++) {
+                        this.model = new Menu();
+                        this.model.setMenuNome(armazemNome[j]);
+                        this.model.setMenuOrdem(j);
+                        this.model.setMenuSts(true);
+                        this.model.setMenuTipo(armazemTipo[j]);
+                        this.model.setMenuDescr(armazemDesc[j]);
+                        this.model.setMenuLink(armazemLink[j]);
+                        this.model.setMenuMenuId(idPai[i]);
+                        dadosArmazem.add(this.model);
+                    }
+                    dados.put("Armazem", dadosArmazem);
+                } else if ("Movimentações".equalsIgnoreCase(pai[i])) {
+                    String[] movimentacoesNome = {"Ordem de Serviço"};
+                    String[] movimentacoesDesc = {"Cadastro/alteração de ordens de serviços"};
+                    String[] movimentacoesLink = {"/pages/ordemservico/ordemservico.faces"};
+                    //G de gerente e F de funcionario e A de administrador
+                    String[] movimentacoesTipo = {"F"};
+                    Collection<Menu> dadosMovimentacoes = new ArrayList<Menu>();
+                    for (int j = 0; j < movimentacoesNome.length; j++) {
+                        this.model = new Menu();
+                        this.model.setMenuNome(movimentacoesNome[j]);
+                        this.model.setMenuOrdem(j);
+                        this.model.setMenuSts(true);
+                        this.model.setMenuTipo(movimentacoesTipo[j]);
+                        this.model.setMenuDescr(movimentacoesDesc[j]);
+                        this.model.setMenuLink(movimentacoesLink[j]);
+                        this.model.setMenuMenuId(idPai[i]);
+                        dadosMovimentacoes.add(this.model);
+                    }
+                    dados.put("movimentacoes", dadosMovimentacoes);
+                } else if ("Relatórios".equalsIgnoreCase(pai[i])) {
+                    String[] relatoriosNome = {"Ordem de serviço"};
+                    String[] relatoriosDesc = {"Relatórios de ordem de serviço"};
+                    String[] relatoriosLink = {"/pages/relos/relos.faces"};
+                    //G de gerente e F de funcionario e A de administrador
+                    String[] relatoriosTipo = {"G"};
+                    Collection<Menu> dadosRelatorios = new ArrayList<Menu>();
+                    for (int j = 0; j < relatoriosNome.length; j++) {
+                        this.model = new Menu();
+                        this.model.setMenuNome(relatoriosNome[j]);
+                        this.model.setMenuOrdem(j);
+                        this.model.setMenuSts(true);
+                        this.model.setMenuTipo(relatoriosTipo[j]);
+                        this.model.setMenuDescr(relatoriosDesc[j]);
+                        this.model.setMenuLink(relatoriosLink[j]);
+                        this.model.setMenuMenuId(idPai[i]);
+                        dadosRelatorios.add(this.model);
+                    }
+                    dados.put("Relatórios", dadosRelatorios);
+                } else if ("Configurações".equalsIgnoreCase(pai[i])) {
+                    String[] configuracoesNome = {"Menus", "Parametros", "Temas"};
+                    String[] configuracoesDesc = {"Cadastro/alteração de menus", "Cadastro/alteração de parametros", "Alteração de tema(layout) do sistema"};
+                    String[] configuracoesLink = {"/pages/menu/menu.faces", "/pages/parametro/parametro.faces", "/pages/tema/tema.faces"};
+                    //G de gerente e F de funcionario e A de administrador
+                    String[] configuracoesTipo = {"A", "A", "F"};
+                    Collection<Menu> dadosConfiguracoes = new ArrayList<Menu>();
+                    for (int j = 0; j < configuracoesNome.length; j++) {
+                        this.model = new Menu();
+                        this.model.setMenuNome(configuracoesNome[j]);
+                        this.model.setMenuOrdem(j);
+                        this.model.setMenuSts(true);
+                        this.model.setMenuTipo(configuracoesTipo[j]);
+                        this.model.setMenuDescr(configuracoesDesc[j]);
+                        this.model.setMenuLink(configuracoesLink[j]);
+                        this.model.setMenuMenuId(idPai[i]);
+                        dadosConfiguracoes.add(this.model);
+                    }
+                    dados.put("Configurações", dadosConfiguracoes);
+                } else if ("Ajuda".equalsIgnoreCase(pai[i])) {
+                    String[] ajudaNome = {"Alterar senha", "Help", "Sobre", "Email contato TI Forte"};
+                    String[] ajudaDesc = {"Alterar a senha de usuário", "Ajuda sobre o sistema", "Sobre o sistema", "Entrar em contato com a equipe da TI Forte"};
+                    String[] ajudaLink = {"/pages/altsenha/altsenha.faces", "/pages/help/help.faces", "/pages/sobre/sobre.faces", "/pages/emailContato/emailcontato.faces"};
+                    //G de gerente e F de funcionario e A de administrador
+                    String[] ajudaTipo = {"F", "F", "F", "F"};
+                    Collection<Menu> dadosAjuda = new ArrayList<Menu>();
+                    for (int j = 0; j < ajudaNome.length; j++) {
+                        this.model = new Menu();
+                        this.model.setMenuNome(ajudaNome[j]);
+                        this.model.setMenuOrdem(j);
+                        this.model.setMenuSts(true);
+                        this.model.setMenuTipo(ajudaTipo[j]);
+                        this.model.setMenuDescr(ajudaDesc[j]);
+                        this.model.setMenuLink(ajudaLink[j]);
+                        this.model.setMenuMenuId(idPai[i]);
+                        dadosAjuda.add(this.model);
+                    }
+                    dados.put("Ajuda", dadosAjuda);
+                }
+            }
+            return dados;
+        } catch (Exception e) {
+            throw new AgendaException(e, this.usr);
+        }
+    }
+
+    public Usuario getUsr() {
+        return usr;
+    }
+
+    public void setUsr(Usuario usr) {
+        this.usr = usr;
+    }
+}

@@ -1,0 +1,89 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business
+END
+AcessoBusinessImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/AcessoBusinessImp.java
+END
+MenuBusiness.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/MenuBusiness.java
+END
+LogAcessoBusinessImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/LogAcessoBusinessImp.java
+END
+AuditoriaBusinessImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/AuditoriaBusinessImp.java
+END
+UsuarioBusiness.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/UsuarioBusiness.java
+END
+LogErroBusiness.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/LogErroBusiness.java
+END
+MenuBusinessImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/MenuBusinessImp.java
+END
+ParametroBusiness.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/ParametroBusiness.java
+END
+AcessoBusiness.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/AcessoBusiness.java
+END
+UsuarioBusinessImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/UsuarioBusinessImp.java
+END
+LogAcessoBusiness.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/LogAcessoBusiness.java
+END
+LogErroBusinessImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/LogErroBusinessImp.java
+END
+ParametroBusinessImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/ParametroBusinessImp.java
+END
+AuditoriaBusiness.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Business/AuditoriaBusiness.java
+END

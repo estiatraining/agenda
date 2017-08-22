@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Crud
+END
+CrudBusinessImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Crud/CrudBusinessImp.java
+END
+CrudController.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Crud/CrudController.java
+END
+CrudDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Crud/CrudDao.java
+END
+CrudControllerImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Crud/CrudControllerImp.java
+END
+CrudDaoImp.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Crud/CrudDaoImp.java
+END
+CrudBusiness.java
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Crud/CrudBusiness.java
+END

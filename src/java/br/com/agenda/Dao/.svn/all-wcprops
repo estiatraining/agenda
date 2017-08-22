@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Dao
+END
+AcessoDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Dao/AcessoDao.java
+END
+LogAcessoDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Dao/LogAcessoDao.java
+END
+AuditoriaDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Dao/AuditoriaDao.java
+END
+MenuDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Dao/MenuDao.java
+END
+UsuarioDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Dao/UsuarioDao.java
+END
+LogErroDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Dao/LogErroDao.java
+END
+ParametroDao.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Dao/ParametroDao.java
+END

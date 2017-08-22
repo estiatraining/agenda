@@ -1,0 +1,119 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package br.com.agenda.Controller;
+
+import br.com.agenda.Business.LogAcessoBusiness;
+import br.com.agenda.Business.LogAcessoBusinessImp;
+import br.com.agenda.Business.UsuarioBusiness;
+import br.com.agenda.Business.UsuarioBusinessImp;
+import br.com.agenda.Crud.CrudBusiness;
+import br.com.agenda.Crud.CrudControllerImp;
+import br.com.agenda.Exceptions.AgendaException;
+import br.com.agenda.Model.Usuario;
+import java.io.IOException;
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
+import org.primefaces.context.RequestContext;
+
+/**
+ *
+ * @author Destroyer
+ */
+@ManagedBean(name = "cUsuario")
+@RequestScoped
+public class UsuarioController extends CrudControllerImp<Usuario> {
+
+    private Usuario objUsuario;
+
+    public UsuarioController() throws Exception {
+        try {
+            this.objUsuario = new Usuario();
+            getBusiness().setUsuario(getUsuarioSessions());
+        } catch (Exception ex) {
+            throw new AgendaException(ex, getUsuarioSessions());
+        }
+    }
+
+    public void validarUsuario(ActionEvent actionEvent) throws Exception {
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesMessage msg = null;
+        boolean loggedIn = false;
+        this.objUsuario = ((UsuarioBusiness) getBusiness()).validarUsuario(getObjUsuario());
+        if (this.objUsuario != null) {
+            logIn(this.objUsuario);
+            loggedIn = true;
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "", "");
+        } else {
+            loggedIn = false;
+            msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro ao logar", "Usuário ou senha incorretos.");
+        }
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        context.addCallbackParam("login", loggedIn);
+    }
+
+    public void logIn(Usuario bean) throws Exception {
+        try {
+            FacesContext fc = FacesContext.getCurrentInstance();
+            HttpServletRequest request = (HttpServletRequest) fc.getExternalContext().getRequest();
+            String ip = request.getRemoteAddr();
+            LogAcessoBusiness businessLogAcesso = new LogAcessoBusinessImp(ip, bean);
+            new Thread(businessLogAcesso).start();
+            FacesContext.getCurrentInstance().getExternalContext().getSession(true);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usrSession", bean);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("pages/home/home.xhtml");
+        } catch (Exception e) {
+            throw new AgendaException(e, getUsuarioSessions());
+        }
+    }
+
+    public void logOut() throws Exception {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("usrSession");
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("validaUsuarioAction");
+            this.objUsuario = null;
+            FacesContext.getCurrentInstance().getExternalContext().redirect("/agenda/index.xhtml");
+        } catch (Exception e) {
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("/agenda/index.xhtml");
+            } catch (IOException ex) {
+                throw new AgendaException(ex, getUsuarioSessions());
+            }
+        }
+    }
+
+    @Override
+    public Integer getId() {
+        return this.objUsuario.getUsrId();
+    }
+
+    @Override
+    public CrudBusiness<Usuario> getBusiness() throws Exception {
+        UsuarioBusiness business = new UsuarioBusinessImp();
+        return business;
+    }
+
+    @Override
+    public void clear() throws Exception {
+        this.objUsuario = new Usuario();
+    }
+
+    @Override
+    public Usuario getBean() throws Exception {
+        return getObjUsuario();
+    }
+
+    public Usuario getObjUsuario() {
+        return objUsuario;
+    }
+
+    public void setObjUsuario(Usuario objUsuario) {
+        this.objUsuario = objUsuario;
+    }
+}

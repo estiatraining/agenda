@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Utils
+END
+Utils.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Utils/Utils.java
+END
+BooleanToStringConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Utils/BooleanToStringConverter.java
+END
+HibernateUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Utils/HibernateUtils.java
+END
+SessionUtils.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Utils/SessionUtils.java
+END
+EnviaEmail.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Utils/EnviaEmail.java
+END
+StringToUpperConverter.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Utils/StringToUpperConverter.java
+END

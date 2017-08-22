@@ -1,0 +1,230 @@
+/*
+ * 
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package br.com.agenda.Crud;
+
+import br.com.agenda.Business.AuditoriaBusiness;
+import br.com.agenda.Business.AuditoriaBusinessImp;
+import br.com.agenda.Exceptions.AgendaException;
+import br.com.agenda.Model.Auditoria;
+import br.com.agenda.Model.Usuario;
+import br.com.agenda.Utils.HibernateUtils;
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.util.List;
+import org.hibernate.Query;
+import org.hibernate.Session;
+
+/**
+ *
+ * @author Destroyer
+ */
+public abstract class CrudDaoImp<T, MODEL extends Serializable> implements CrudDao<MODEL> {
+
+    private Class<MODEL> oClass = null;
+    private Usuario usr = null;
+
+    public CrudDaoImp() {
+        this.oClass = (Class<MODEL>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+    }
+
+    protected Class<MODEL> getObjectClass() {
+        return this.oClass;
+    }
+
+    protected Session getSession() {
+        return (Session) HibernateUtils.getSessionFactory().getCurrentSession();
+    }
+    
+    @Override
+    public Usuario getUsuario() {
+        return usr;
+    }
+
+    @Override
+    public void setUsuario(Usuario usr) {
+        this.usr = usr;
+    }   
+    
+    @Override
+    public MODEL save(MODEL d) throws Exception {
+        Session ses = getSession();
+        try {
+            ses.beginTransaction();
+            ses.save(d);
+            ses.getTransaction().commit();
+            Usuario beanUsuario = new Usuario();
+            if (d instanceof Usuario) {
+                beanUsuario.setUsrId(((Usuario) d).getUsrId());
+            } else {
+                beanUsuario = this.getUsuario();
+            }
+           if (!(d instanceof Auditoria)) {
+                AuditoriaBusiness auditoria = new AuditoriaBusinessImp("save".toUpperCase(), d.getClass().getSimpleName(), ((MODEL) d).toString(), beanUsuario);
+                auditoria.setUsuario(beanUsuario);
+                new Thread(auditoria).start();
+            }
+        } catch (Exception e) {
+            ses.getTransaction().rollback();
+            throw new AgendaException(e, usr);
+        } finally {
+            return (MODEL) d;
+        }
+    }  
+    
+    @Override
+    public Boolean update(MODEL d) throws Exception {
+        Session ses = getSession();
+        Object o = new Object();
+        try {
+            ses.getTransaction().begin();
+            o = ses.merge(d);
+            Usuario beanUsuario = new Usuario();
+            if (d instanceof Usuario) {
+                beanUsuario.setUsrId(((Usuario) d).getUsrId());
+            } else {
+                beanUsuario.setUsrId(usr.getUsrId());
+            }
+            ses.getTransaction().commit();
+            AuditoriaBusiness auditoria = new AuditoriaBusinessImp("update".toUpperCase(), d.getClass().getName(), d.toString(), beanUsuario);
+            auditoria.setUsuario(beanUsuario);
+            new Thread(auditoria).start();
+        } catch (Exception e) {
+            ses.getTransaction().rollback();
+            throw new AgendaException(e, usr);
+        } finally {
+            if (o != null) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+    
+    @Override
+    public void delete(MODEL d) throws Exception {
+        Session ses = getSession();
+        Object o = new Object();
+        try {
+            ses.getTransaction().begin();
+            o = ses.merge(d);
+            ses.delete(o);
+            Usuario beanUsuario = new Usuario();
+            if (d instanceof Usuario) {
+                beanUsuario.setUsrId(((Usuario) d).getUsrId());
+            } else {
+                beanUsuario.setUsrId(usr.getUsrId());
+            }
+            ses.getTransaction().commit();
+            AuditoriaBusiness auditoria = new AuditoriaBusinessImp("delete".toUpperCase(), d.getClass().getName(), d.toString(), beanUsuario);
+            auditoria.setUsuario(beanUsuario);
+            new Thread(auditoria).start();
+        } catch (Exception e) {
+            ses.getTransaction().rollback();
+            throw new AgendaException(e, usr);
+        }
+    } 
+    
+    @Override
+    public MODEL restore(Integer id) throws Exception {
+        Session ses = getSession();
+        try {
+            ses.beginTransaction();
+            ses.getTransaction().begin();
+            MODEL dados = (MODEL) ses.get(oClass.getCanonicalName(), id);
+            ses.getTransaction().commit();
+            return dados;
+        } catch (Exception e) {
+            ses.getTransaction().rollback();
+            throw new AgendaException(e, usr);
+        }
+    }    
+    
+    @Override
+    public List<MODEL> select() throws Exception {
+        Session ses = getSession();
+        try {
+            String sql = "FROM " + oClass.getCanonicalName() + " ";
+            ses.beginTransaction();
+            ses.getTransaction().begin();
+            Query qr = ses.createQuery(sql);
+            List<MODEL> toReturn = qr.list();
+            ses.getTransaction().commit();
+            return toReturn;
+        } catch (Exception e) {
+            ses.getTransaction().rollback();
+            throw new AgendaException(e, usr);
+        }
+    }  
+    
+    @Override
+    public MODEL find(Class classToSearch, Serializable key) throws Exception {
+        Session ses = getSession();
+        try {
+            ses.beginTransaction();
+            ses.getTransaction().begin();
+            Serializable toReturn = (Serializable) ses.get(classToSearch, key);
+            ses.getTransaction().commit();
+            return (MODEL) toReturn;
+        } catch (Exception e) {
+            ses.getTransaction().rollback();
+            throw new AgendaException(e, usr);
+        }
+    } 
+    
+    @Override
+    public List<MODEL> findBySqlQuery(String query) throws Exception {
+        Session ses = getSession();
+        try {
+            ses.beginTransaction();
+            ses.getTransaction().begin();
+            Query qr = ses.createQuery(query);
+            List<MODEL> toReturn = qr.list();
+            ses.getTransaction().commit();
+            return toReturn;
+        } catch (Exception e) {
+            ses.getTransaction().rollback();
+            throw new AgendaException(e, usr);
+        }
+    } 
+    
+    @Override
+    public List<MODEL> list(Class classToCast, String query, Object... params) throws Exception {
+        Session ses = getSession();
+        try {
+            ses.beginTransaction();
+            ses.getTransaction().begin();
+            Query qr = ses.createQuery(query);
+            for (int i = 0; i < params.length; i++) {
+                qr.setParameter(i, params[i]);
+            }
+            List<MODEL> toReturn = qr.list();
+            ses.getTransaction().commit();
+            return toReturn;
+        } catch (Exception e) {
+            ses.getTransaction().rollback();
+            throw new AgendaException(e, usr);
+        }
+    } 
+    
+    @Override
+    public Serializable getPurePojo(String query, Object... params) throws Exception {
+        Session ses = getSession();
+        try {
+            ses.beginTransaction();
+            ses.getTransaction().begin();
+            Query qr = ses.createQuery(query);
+            for (int i = 0; i < params.length; i++) {
+                qr.setParameter(i, params[i]);
+            }
+            Object toReturn = qr.uniqueResult();
+            ses.getTransaction().commit();
+            return (Serializable) toReturn;
+        } catch (Exception e) {
+            ses.getTransaction().rollback();
+            throw new AgendaException(e, usr);
+        }
+    }    
+}

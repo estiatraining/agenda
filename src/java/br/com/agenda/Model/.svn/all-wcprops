@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Model
+END
+LogAcesso.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Model/LogAcesso.java
+END
+Auditoria.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Model/Auditoria.java
+END
+Menu.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Model/Menu.java
+END
+Usuario.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Model/Usuario.java
+END
+LogErro.java
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Model/LogErro.java
+END
+Parametro.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Model/Parametro.java
+END
+Acesso.java
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/agenda/!svn/ver/1/src/java/br/com/agenda/Model/Acesso.java
+END
